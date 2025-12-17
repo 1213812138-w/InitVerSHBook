@@ -100,6 +100,9 @@ export default {
         this.fetchOrders();
         this.tradeStatusSelected(this.tradeStatusList[0]);
     },
+  /**
+   * test
+   */
     methods: {
         tradeStatusSelected(tradeStatusItem) {
             this.tradeStatusSelectedItem = tradeStatusItem;
