@@ -140,7 +140,7 @@ export default {
         oldLevel: 9,
         inventory: 1,
         isBargain: false,
-        categoryId: 8,
+        categoryId: 1,
       },
       categorySelected: {}, // 当前选中的商品类别
       dialogImageUrl: "",
@@ -213,7 +213,7 @@ export default {
               oldLevel: 9,
               inventory: 1,
               isBargain: false,
-              categoryId: 8,
+              categoryId: 1,
             };
             this.inventory=1;
             this.oldLevel=9;
