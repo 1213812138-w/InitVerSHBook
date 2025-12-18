@@ -164,7 +164,7 @@
 
     <!-- 回复对话框 -->
     <el-dialog :show-close="false" :visible.sync="dialogReply" width="30%">
-      <div style="padding: 20px;">
+      <div style="padding: 40px;">
         <p>反馈标题：{{ replyData.title }}</p>
         <p>用户：{{ replyData.userName }}</p>
         <el-input
