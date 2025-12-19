@@ -4,14 +4,14 @@
 
     <insert id="submit">
         INSERT INTO feedback (id,user_id,title,content,picture_list,reply,admin_reply_status,created_time,updated_time,type)
-        VALUES (#{id},#{userId},#{title},#{content},#{imageList},#{replyContent},#{isReply},#{createTime},#{updateTime},#{type})
+        VALUES (#{id},#{userId},#{title},#{content},#{imageList},#{replyContent},#{isReply},#{createTime},#{replyTime},#{type})
     </insert>
 
 
     <!-- 管理员回复 -->
     <update id="updateReply" >
         UPDATE feedback
-        SET content = #{replyContent},
+        SET reply = #{replyContent},
             admin_reply_status = #{isReply},
             updated_time = #{replyTime}
         WHERE id = #{id}

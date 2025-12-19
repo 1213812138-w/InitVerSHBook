@@ -17,6 +17,9 @@
             <span v-if="loginStatus" @click="handleRouteSelect('/myView')"
               >足迹</span
             >
+            <span v-if="loginStatus" @click="handleRouteSelect('/feedback')"
+              >问题反馈</span
+            >
           </div>
         </div>
 
