@@ -89,8 +89,10 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Override
     public Result<String> replyFeedback(Feedback feedback)
     {
+        System.out.print(feedback.getReplyContent());
         if(feedback.getIsReply() == 1)
         {
+
             return ApiResult.error("请勿重复回复");
         }
         feedback.setIsReply(1);

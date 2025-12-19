@@ -49,7 +49,7 @@ public class Feedback {
     /**
      * 回复状态
      */
-    private Integer isReply ;
+    private Integer isReply=0 ;
 
     /**
      * 反馈类型

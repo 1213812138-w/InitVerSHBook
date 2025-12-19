@@ -94,6 +94,12 @@ const routes = [
         meta: { requireAuth: true }
       },
       {
+        name: "问题反馈",
+        path: "/feedback",
+        component: () => import(`@/views/user/Feedback.vue`),
+        meta: { requireAuth: true }
+      },
+      {
         name: "订单",
         path: "/orders",
         component: () => import(`@/views/user/Orders.vue`),

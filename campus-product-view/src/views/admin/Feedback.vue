@@ -110,9 +110,20 @@
         <el-table-column label="操作" width="140">
           <template slot-scope="scope">
             <span class="text-button" @click="handleView(scope.row)">查看</span>
-            <span class="text-button" @click="handleReply(scope.row)"
-              >回复</span
+            <span
+              v-if="scope.row.isReply === 0"
+              class="text-button"
+              @click="handleReply(scope.row)"
             >
+              回复
+            </span>
+            <span
+              v-else
+              class="text-button"
+              style="color: #bbb; cursor: not-allowed;"
+            >
+              已回复
+            </span>
           </template>
         </el-table-column>
       </el-table>
@@ -290,27 +301,26 @@ export default {
 
     /** 提交回复 */
     submitReply() {
-      if (!this.replyData.replyContent) {
-        this.$message.warning("回复内容不能为空");
-        return;
+     const payload = {
+    id: this.replyData.id,
+    replyContent: this.replyData.replyContent,
+   
+  }
+
+  this.$axios
+    .post('/feedback/reply', payload)
+    .then((res) => {
+      if (res.data.code === 200) {
+        this.$message.success('回复成功')
+        this.dialogReply = false
+        this.fetchFeedback()
+      } else {
+        this.$message.error(res.data.message || '回复失败')
       }
-      this.$axios
-        .post("/feedback/reply", {
-          id: this.replyData.id,
-          replyContent: this.replyData.replyContent
-        })
-        .then(res => {
-          if (res.data.code === 200) {
-            this.$message.success("回复成功");
-            this.dialogReply = false;
-            this.fetchFeedback();
-          } else {
-            this.$message.error(res.data.message || "回复失败");
-          }
-        })
-        .catch(() => {
-          this.$message.error("回复请求失败");
-        });
+    })
+    .catch(() => {
+      this.$message.error('回复请求失败')
+    })
     },
 
     /** 图片解析（后端存的是字符串） */
