@@ -100,6 +100,16 @@
 
     <!-- 商品详细信息（放在左右两侧下方） -->
     <div class="detail-section">
+      <el-tabs v-model="activeName" @tab-click="handleClick">
+        <el-tab-pane label="详细信息" name="first">
+          <ProductDetInfo />
+        </el-tab-pane>
+
+        <el-tab-pane label="相关评论" name="second">
+          <MyOrders />
+        </el-tab-pane>
+
+      </el-tabs>
       <div class="detail">
         <span>详细信息</span>
       </div>
@@ -205,8 +215,12 @@
 </template>
 <script>
 import { getUserInfo } from "@/utils/storage";
+import BuyOrders from "@/views/user/BuyOrders.vue";
+import MyOrders from "@/views/user/MyOrders.vue";
+import ProductDetInfo from "@/views/user/ProductDetInfo.vue";
 export default {
   name: "ProductDetail",
+  components: {ProductDetInfo, MyOrders, BuyOrders},
   data() {
     return {
       productId: null,
@@ -219,6 +233,7 @@ export default {
       dialogProductOperaion: false, // 控制对话框显示
       buyNumber: 1, // 购买数量
       detail: "", // 备注信息
+      activeName: 'first'
     };
   },
   created() {
@@ -228,6 +243,9 @@ export default {
     this.clearBanner(); // 清除定时器
   },
   methods: {
+    handleClick(index,tab){
+
+    },
     buyConfirm() {
       const ordersDTO = {
         productId: this.product.id,
