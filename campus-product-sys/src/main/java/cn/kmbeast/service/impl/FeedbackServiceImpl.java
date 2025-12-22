@@ -49,9 +49,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         if (!StringUtils.hasText(feedback.getTitle())) {
             return ApiResult.error("标题不能为空");
         }
-        if (!StringUtils.hasText(feedback.getImageList())) {
-            return ApiResult.error("请上传反馈图片");
-        }
+
         if (!StringUtils.hasText(feedback.getContent())){
             return ApiResult.error("请填写反馈内容");
         }

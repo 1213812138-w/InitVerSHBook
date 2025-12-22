@@ -4,7 +4,7 @@
 
     <insert id="submit">
         INSERT INTO feedback (id,user_id,title,content,picture_list,reply,admin_reply_status,created_time,updated_time,type)
-        VALUES (#{id},#{userId},#{title},#{content},#{imageList},#{replyContent},#{isReply},#{createTime},#{createTime},#{type})
+        VALUES (#{id},#{userId},#{title},#{content},#{imageList},#{replyContent},#{isReply},#{createTime},#{replyTime},#{type})
     </insert>
 
 
@@ -34,7 +34,7 @@
             AND f.type = #{type}
         </if>
         <if test="isReply != null">
-            AND f.is_reply = #{isReply}
+            AND f.admin_reply_status = #{isReply}
         </if>
 
         <if test="current != null and size != null">
@@ -57,7 +57,7 @@
                 AND f.type = #{type}
             </if>
             <if test="isReply != null">
-                AND f.is_reply = #{isReply}
+                AND f.admin_reply_status = #{isReply}
             </if>
 
         </where>
