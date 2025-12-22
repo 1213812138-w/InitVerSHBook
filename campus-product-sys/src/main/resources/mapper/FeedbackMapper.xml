@@ -34,7 +34,7 @@
             AND f.type = #{type}
         </if>
         <if test="isReply != null">
-            AND f.is_reply = #{isReply}
+            AND f.admin_reply_status = #{isReply}
         </if>
 
         <if test="current != null and size != null">
@@ -57,7 +57,7 @@
                 AND f.type = #{type}
             </if>
             <if test="isReply != null">
-                AND f.is_reply = #{isReply}
+                AND f.admin_reply_status = #{isReply}
             </if>
 
         </where>

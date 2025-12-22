@@ -34,12 +34,11 @@
             :value="item.value"
           ></el-option>
         </el-select>
-
         <el-input
           size="small"
           style="width: 200px;"
-          v-model="feedbackQueryDto.userName"
-          placeholder="用户名"
+          v-model="searchUserName"
+          placeholder="输入用户名"
           clearable
           @clear="handleFilterClear"
         >
@@ -197,6 +196,7 @@
 export default {
   data() {
     return {
+      searchUserName: "",
       // 表格数据
       tableData: [],
       totalItems: 0,
@@ -262,13 +262,36 @@ export default {
 
     /** 搜索触发 */
     handleFilter() {
-      this.currentPage = 1;
-      this.fetchFeedback();
+      if (!this.searchUserName) {
+        this.feedbackQueryDto.userId = "";
+        this.fetchFeedback();
+        return;
+      }
+
+      // 先根据用户名查用户ID
+      this.$axios
+        .post("/user/query", { userName: this.searchUserName }) // 需后端支持模糊或精确查找
+        .then(res => {
+          const { data } = res;
+          if (data.code === 200 && data.data && data.data.length > 0) {
+            const user = data.data[0]; // 默认取第一个匹配项
+            this.feedbackQueryDto.userId = user.id;
+            this.fetchFeedback();
+          } else {
+            this.$message.warning("未找到该用户");
+            this.tableData = [];
+            this.totalItems = 0;
+          }
+        })
+        .catch(() => {
+          this.$message.error("查询用户失败");
+        });
     },
 
     /** 清空搜索 */
     handleFilterClear() {
       this.feedbackQueryDto.userName = "";
+      this.feedbackQueryDto.userId = "";
       this.fetchFeedback();
     },
 
@@ -301,26 +324,25 @@ export default {
 
     /** 提交回复 */
     submitReply() {
-     const payload = {
-    id: this.replyData.id,
-    replyContent: this.replyData.replyContent,
-   
-  }
+      const payload = {
+        id: this.replyData.id,
+        replyContent: this.replyData.replyContent
+      };
 
-  this.$axios
-    .post('/feedback/reply', payload)
-    .then((res) => {
-      if (res.data.code === 200) {
-        this.$message.success('回复成功')
-        this.dialogReply = false
-        this.fetchFeedback()
-      } else {
-        this.$message.error(res.data.message || '回复失败')
-      }
-    })
-    .catch(() => {
-      this.$message.error('回复请求失败')
-    })
+      this.$axios
+        .post("/feedback/reply", payload)
+        .then(res => {
+          if (res.data.code === 200) {
+            this.$message.success("回复成功");
+            this.dialogReply = false;
+            this.fetchFeedback();
+          } else {
+            this.$message.error(res.data.message || "回复失败");
+          }
+        })
+        .catch(() => {
+          this.$message.error("回复请求失败");
+        });
     },
 
     /** 图片解析（后端存的是字符串） */
