@@ -102,18 +102,17 @@
     <div class="detail-section">
       <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="详细信息" name="first">
-          <ProductDetInfo />
+          <div class="detail-content" v-html="product.detail"></div>
         </el-tab-pane>
 
         <el-tab-pane label="相关评论" name="second">
-          <MyOrders />
+          <div v-if="userInfo !== null">
+            <Evaluations contentType="PRODUCT" :contentId="product.id"/>
+          </div>
         </el-tab-pane>
 
       </el-tabs>
-      <div class="detail">
-        <span>详细信息</span>
-      </div>
-      <div class="detail-content" v-html="product.detail"></div>
+
     </div>
     <el-dialog
       :show-close="false"
@@ -215,12 +214,13 @@
 </template>
 <script>
 import { getUserInfo } from "@/utils/storage";
+import Evaluations from "@/components/Evaluations"
 import BuyOrders from "@/views/user/BuyOrders.vue";
 import MyOrders from "@/views/user/MyOrders.vue";
 import ProductDetInfo from "@/views/user/ProductDetInfo.vue";
 export default {
   name: "ProductDetail",
-  components: {ProductDetInfo, MyOrders, BuyOrders},
+  components: {ProductDetInfo, MyOrders, BuyOrders,Evaluations },
   data() {
     return {
       productId: null,
@@ -233,16 +233,34 @@ export default {
       dialogProductOperaion: false, // 控制对话框显示
       buyNumber: 1, // 购买数量
       detail: "", // 备注信息
-      activeName: 'first'
+      activeName: 'first',
+      userInfo: null
     };
   },
   created() {
     this.getParam();
+    this.viewOperation();
   },
   beforeDestroy() {
     this.clearBanner(); // 清除定时器
   },
   methods: {
+    viewOperation() {
+      const userInfo = getUserInfo();
+      if (userInfo === null) { // 没登录不用记录
+        return;
+      }
+      this.userInfo = userInfo;
+      // 对于用户这是无感的
+      this.$axios.post(`/interaction/view/${this.productId}`).then(res => {
+        const { data } = res; // 解构
+        if (data.code === 200) {
+          console.log("用户浏览已经处理");
+        }
+      }).catch(error => {
+        console.log("浏览记录异常：", error);
+      })
+    },
     handleClick(index,tab){
 
     },
@@ -732,8 +750,8 @@ export default {
 /* 商品详细信息（放在左右两侧下方） */
 .detail-section {
   width: 100%;
-  margin-top: 0px;
-  padding-top: 15px;
+  margin-top: -5px;
+  padding-top: 5px;
   border-top: 1px solid #eee;
 }
 
@@ -746,7 +764,7 @@ export default {
   max-width: 100%;
 }
 .detail {
-  font-size: 20px;
+  font-size: 30px;
   color: #333;
   font-weight: bold;
 }

@@ -22,4 +22,9 @@ public interface InteractionService {
 
     Result<String> likeProduct(Integer productId);
     Result<List<ProductVO>> queryUser();
+    Result<Void> view(Integer productId);
+
+    Result<List<ProductVO>> myView();
+
+    Result<String> batchDeleteInteraction();
 }
