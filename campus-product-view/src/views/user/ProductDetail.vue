@@ -100,6 +100,7 @@
 
     <!-- 商品详细信息（放在左右两侧下方） -->
     <div class="detail-section">
+
       <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="详细信息" name="first">
           <div class="detail-content" v-html="product.detail"></div>
@@ -749,15 +750,28 @@ export default {
 
 /* 商品详细信息（放在左右两侧下方） */
 .detail-section {
+  font-size: 20px;
   width: 100%;
   margin-top: -5px;
-  padding-top: 5px;
+  padding-top: -5px;
   border-top: 1px solid #eee;
+  /* 直接针对标签内的文字 */
+  ::v-deep .el-tabs__item span {
+    font-size: 18px !important;
+    font-weight: 500 !important;
+  }
+
+  ::v-deep .el-tabs__item.is-active span {
+    font-size: 20px !important;
+    font-weight: 600 !important;
+  }
 }
+
 
 .detail-content {
   line-height: 1.6;
   color: #333;
+  font-size: 15px;
 }
 
 .detail-content >>> * {
@@ -855,4 +869,5 @@ export default {
     }
   }
 }
+
 </style>

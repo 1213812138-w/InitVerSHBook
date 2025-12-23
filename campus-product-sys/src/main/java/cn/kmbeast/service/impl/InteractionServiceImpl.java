@@ -83,6 +83,8 @@ public class InteractionServiceImpl implements InteractionService {
         message.setCreateTime(LocalDateTime.now());
         message.setContent("用户【" + operator.getUserName() + "】对你的【" + productVO.getName() + "】感兴趣!");
         messageMapper.save(message);
+        Interaction interaction = createInteraction(productId, InteractionEnum.LOVE.getType());
+        interactionMapper.save(interaction);
         return ApiResult.success("卖家已感受到你的热情，快下单吧!");
     }
 
