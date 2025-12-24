@@ -22,7 +22,7 @@ public class EvaluationsController {
     private EvaluationsService evaluationsService;
 
     /**
-     * 评论
+     * 评论comment
      *
      * @return Result<String>
      */
