@@ -1,4 +1,4 @@
 [submodule "repo"]
 	path = repo
-	url = git@codehub.devcloud.cn-north-4.huaweicloud.com:94f20f0ca8894b5397b5e314ea65df14/repo.git
+	url = https://codehub.devcloud.cn-north-4.huaweicloud.com/94f20f0ca8894b5397b5e314ea65df14/repo.git
 	branch = master
