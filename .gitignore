@@ -21,3 +21,96 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+# ============ IDE 配置 ============
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# IntelliJ IDEA 特定文件
+/shelf/
+/workspace.xml
+/dataSources.local.xml
+/dataSources/
+/httpRequests/
+
+# VS Code
+.vscode/
+
+# ============ 编译输出 ============
+## Java 项目
+target/
+build/
+out/
+bin/
+*.class
+*.jar
+*.war
+*.ear
+
+## 前端项目
+node_modules/
+dist/
+.cache/
+
+# ============ 配置文件 ============
+## 应用配置文件（重点）
+application*.yml
+application*.properties
+application*.yaml
+application*.json
+
+## 本地开发配置
+*-local.yml
+*-local.properties
+*-dev.yml
+*-dev.properties
+*-local.yaml
+*-local.json
+
+# ============ 操作系统文件 ============
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ============ 依赖管理 ============
+## Maven
+dependency-reduced-pom.xml
+
+## Gradle
+.gradle/
+gradle-app.setting
+
+# ============ 项目特定配置 ============
+## 你的项目结构
+campus-product-sys/target/
+campus-product-sys/out/
+campus-product-view/node_modules/
+campus-product-view/dist/
+
+# ============ 日志和临时文件 ============
+*.log
+logs/
+tmp/
+temp/
+
+# ============ GitHub 相关 ============
+## Copilot 配置
+campus-product-view/.github/copilot-instructions.md
+
+## 敏感文件
+.env
+.env.local
+.env.*.local
+
+# ============ 其他 ============
+*.bak
+*.swp
+*.swo
+*~
+~$*
+
+# ============ 数据库文件 ============
+*.db
+*.sqlite
+*.h2.db
