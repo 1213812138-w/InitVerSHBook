@@ -65,7 +65,7 @@
 
                             <span class="price">{{ product.price }}</span>
 
-                            <span class="love">4人想要</span>
+                            <span class="love">3人想要</span>
 
                         </div>
 
