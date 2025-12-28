@@ -7,29 +7,43 @@ import lombok.EqualsAndHashCode;
 import java.util.List;
 
 /**
- * 互动行为查询条件类
+ * 申诉的查询条件类
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class ComplainQueryDto extends QueryDto {
+public class ComplainQueryDTO extends QueryDto {
     /**
-     * 用户ID
+     * 申诉主键ID
      */
-    private Integer userId;
+    private Integer id;
+
     /**
-     * 商品ID
+     * 订单ID
      */
-    private Integer productId;
+    private Integer orderId;
+
     /**
-     * 订单号
+     * 订单号（便于通过订单号关联查询申诉）
      */
-    private String code;
+    private String orderCode;
+
     /**
-     * 管理员是否处理申诉
+     * 用户是否发起申诉（true=已发起，false=未发起）
+     */
+    private Boolean customerComplainStatus;
+
+    /**
+     * 管理员是否已经处理申诉（true=已处理，false=未处理）
      */
     private Boolean adminComplainStatus;
+
     /**
-     * 查询自己收到的订单的申诉
+     * 用户ID（查询指定用户的申诉）
      */
-    private List<Integer> productIds;
+    private Integer userId;
+
+    /**
+     * 订单ID列表（批量查询多个订单的申诉）
+     */
+    private List<Integer> orderIds;
 }

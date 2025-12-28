@@ -1,12 +1,14 @@
 package cn.kmbeast.service.impl;
 
 import cn.kmbeast.context.LocalThreadHolder;
+import cn.kmbeast.mapper.ComplainMapper;
 import cn.kmbeast.mapper.OrdersMapper;
 import cn.kmbeast.mapper.ProductMapper;
 import cn.kmbeast.pojo.api.ApiResult;
 import cn.kmbeast.pojo.api.Result;
 import cn.kmbeast.pojo.dto.query.extend.OrdersQueryDto;
 import cn.kmbeast.pojo.entity.Orders;
+import cn.kmbeast.pojo.vo.ComplainVO;
 import cn.kmbeast.pojo.vo.OrdersVO;
 import cn.kmbeast.service.OrdersService;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,9 @@ public class OrdersServiceImpl implements OrdersService {
     private OrdersMapper ordersMapper;
     @Resource
     private ProductMapper productMapper;
+
+    @Resource
+    private ComplainMapper complainMapper;
 
     /**
      * 新增
@@ -66,15 +71,23 @@ public class OrdersServiceImpl implements OrdersService {
     }
 
     /**
-     * 查询
-     *
-     * @param ordersQueryDto 查询参数
-     * @return Result<List < OrdersVO>> 后台通用返回封装类
+     * 查询（用户 /queryUser 使用此方法）
      */
     @Override
     public Result<List<OrdersVO>> query(OrdersQueryDto ordersQueryDto) {
         int totalCount = ordersMapper.queryCount(ordersQueryDto);
         List<OrdersVO> ordersVOList = ordersMapper.query(ordersQueryDto);
+
+        // 新增：为每个订单关联查询 complain 表
+        for (OrdersVO vo : ordersVOList) {
+            ComplainVO complain = complainMapper.queryByOrderId(vo.getId());
+            if (complain != null) {
+                vo.setAdminComment(complain.getAdminComment());
+            } else {
+                vo.setAdminComment(null);
+            }
+        }
+
         return ApiResult.success(ordersVOList, totalCount);
     }
 

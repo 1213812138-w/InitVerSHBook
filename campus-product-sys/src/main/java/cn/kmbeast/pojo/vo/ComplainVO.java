@@ -17,6 +17,12 @@ public class ComplainVO extends Complain {
      * 商家名
      */
     private String sellerName;
+
+     /**
+     * 管理员处理意见（新增）
+     */
+    private String adminComment;
+    
     /**
      * 客户名
      */
