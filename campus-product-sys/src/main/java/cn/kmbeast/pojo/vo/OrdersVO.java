@@ -10,6 +10,12 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class OrdersVO extends Orders {
+
+    /**
+     * 管理员处理意见（新增）
+     */
+    private String adminComment;
+
     /**
      * 用户名
      */

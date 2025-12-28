@@ -3,117 +3,110 @@ package cn.kmbeast.controller;
 import cn.kmbeast.aop.Pager;
 import cn.kmbeast.context.LocalThreadHolder;
 import cn.kmbeast.pojo.api.Result;
-import cn.kmbeast.pojo.dto.query.extend.ProductQueryDto;
-import cn.kmbeast.pojo.dto.update.OrdersDTO;
-import cn.kmbeast.pojo.entity.Product;
-import cn.kmbeast.pojo.vo.ProductVO;
-import cn.kmbeast.service.ProductService;
+import cn.kmbeast.pojo.dto.query.extend.ComplainQueryDTO;
+import cn.kmbeast.pojo.entity.Complain;
+import cn.kmbeast.pojo.vo.ComplainVO;
+import cn.kmbeast.service.ComplainService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
 
 /**
- * 商品控制器
+ * 申诉控制器（完全匹配ComplainService接口）
  */
 @RestController
-@RequestMapping("/complain")
+@RequestMapping("/api/campus-product-sys/v1.0/complain")
 public class ComplainController {
 
     @Resource
-    private ProductService productService;
+    private ComplainService complainService;
+
     /**
-     * 商品下单
-     *
-     * @param ordersDTO 参数
-     * @return Result<String> 响应结果
-     */
-    @PostMapping(value = "/postcomplain")
-    @ResponseBody
-    public Result<String> postcomplain(@RequestBody OrdersDTO ordersDTO) {
-        return productService.buyProduct(ordersDTO);
-    }
-    /**
-     * 新增
-     *
-     * @param product 参数
-     * @return Result<String> 响应结果
+     * 保存申诉信息
      */
     @PostMapping(value = "/save")
     @ResponseBody
-    public Result<String> save(@RequestBody Product product) {
-        return productService.save(product);
+    public Result<String> save(@RequestBody Complain complain) {
+        return complainService.save(complain);
+    }
+
+    @GetMapping("/test")
+    public String test() {
+        return "ComplainController 已加载！处理接口正常！";
     }
 
     /**
-     * 修改
-     *
-     * @param product 参数
-     * @return Result<String> 响应结果
+     * 修改申诉信息
      */
     @PutMapping(value = "/update")
     @ResponseBody
-    public Result<String> update(@RequestBody Product product) {
-        return productService.update(product);
+    public Result<String> update(@RequestBody Complain complain) {
+        return complainService.update(complain);
     }
 
     /**
-     * 批量删除
+     * 批量删除申诉信息
      */
     @PostMapping(value = "/batchDelete")
     @ResponseBody
     public Result<String> batchDelete(@RequestBody List<Integer> ids) {
-        return productService.batchDelete(ids);
+        return complainService.batchDelete(ids);
     }
 
     /**
-     * 查询
-     *
-     * @param productQueryDto 查询参数
-     * @return Result<List < ProductVO>> 响应结果
+     * 查询用户自己发起的申诉数据
+     */
+    @PostMapping(value = "/queryUser")
+    @ResponseBody
+    public Result<List<ComplainVO>> queryUser(@RequestBody ComplainQueryDTO complainQueryDTO) {
+        complainQueryDTO.setUserId(LocalThreadHolder.getUserId());
+        return complainService.query(complainQueryDTO);
+    }
+
+    /**
+     * 查询申诉列表数据（无分页）
+     */
+    @PostMapping(value = "/queryComplainList")
+    @ResponseBody
+    public Result<List<ComplainVO>> queryComplainList(@RequestBody ComplainQueryDTO complainQueryDTO) {
+        return complainService.queryComplainList(complainQueryDTO);
+    }
+
+    /**
+     * 分页查询申诉列表
      */
     @Pager
     @PostMapping(value = "/query")
     @ResponseBody
-    public Result<List<ProductVO>> query(@RequestBody ProductQueryDto productQueryDto) {
-        return productService.query(productQueryDto);
+    public Result<List<ComplainVO>> query(@RequestBody ComplainQueryDTO complainQueryDTO) {
+        return complainService.query(complainQueryDTO);
     }
 
     /**
-     * 查询用户商品列表
-     *
-     * @param productQueryDto 查询参数
-     * @return Result<List < ProductVO>> 响应结果
+     * 根据订单ID列表查询申诉信息
      */
-    @PostMapping(value = "/queryUser")
+    @PostMapping(value = "/queryByOrderIds")
     @ResponseBody
-    public Result<List<ProductVO>> queryUser(@RequestBody ProductQueryDto productQueryDto) {
-        productQueryDto.setUserId(LocalThreadHolder.getUserId());
-        return productService.query(productQueryDto);
+    public Result<List<ComplainVO>> queryByOrderIds(@RequestBody ComplainQueryDTO complainQueryDTO) {
+        return complainService.queryByOrderIds(complainQueryDTO);
     }
 
     /**
-     * 商品下单
-     *
-     * @param ordersId 订单ID
-     * @return Result<String> 响应结果
+     * 根据订单ID查询申诉信息
      */
-    @PostMapping(value = "/placeAnOrder/{ordersId}")
+    @PostMapping(value = "/queryByOrderId")
     @ResponseBody
-    public Result<String> placeAnOrder(@PathVariable Integer ordersId) {
-        return productService.placeAnOrder(ordersId);
+    public Result<ComplainVO> queryByOrderId(@RequestParam Integer orderId) {
+        return complainService.queryByOrderId(orderId);
     }
 
     /**
-     * 申请退款
-     *
-     * @param ordersId 订单ID
-     * @return Result<String> 响应结果
+     * 根据ID删除申诉信息
      */
-    @PostMapping(value = "/refund/{ordersId}")
+    @PostMapping(value = "/delete")
     @ResponseBody
-    public Result<String> refund(@PathVariable Integer ordersId) {
-        return productService.refund(ordersId);
+    public Result<String> delete(@RequestParam Integer id) {
+        return complainService.delete(id);
     }
-
 }

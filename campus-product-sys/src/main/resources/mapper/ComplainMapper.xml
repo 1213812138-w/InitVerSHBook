@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.kmbeast.mapper.ComplainMapper">
+
+    <!-- 保存申诉信息（修复主键回填） -->
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO `complain` (order_id,
+                                picture_list,
+                                detail,
+                                admin_comment,
+                                customer_complain_status,
+                                admin_complain_status,
+                                create_time,
+                                process_time)
+        VALUES (#{orderId}, #{pictureList}, #{detail}, #{adminComment},
+                #{customerComplainStatus}, #{adminComplainStatus}, #{createTime}, #{processTime})
+    </insert>
+
+    <!-- 修改申诉信息（优化：只判断null，不判断空串） -->
+    <update id="update">
+        UPDATE complain
+        <set>
+            <if test="orderId != null">
+                order_id = #{orderId},
+            </if>
+            <if test="pictureList != null">
+                picture_list = #{pictureList},
+            </if>
+            <if test="detail != null">
+                detail = #{detail},
+            </if>
+            <if test="adminComment != null">
+                admin_comment = #{adminComment},
+            </if>
+            <if test="customerComplainStatus != null">
+                customer_complain_status = #{customerComplainStatus},
+            </if>
+            <if test="adminComplainStatus != null">
+                admin_complain_status = #{adminComplainStatus},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="processTime != null">
+                process_time = #{processTime}
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 根据id删除申诉信息 -->
+    <delete id="delete">
+        DELETE FROM complain WHERE id = #{id}
+    </delete>
+
+    <!-- 批量删除申诉信息 -->
+    <delete id="batchDelete" parameterType="list">
+        DELETE FROM complain WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 分页查询申诉信息（已修复参数名） -->
+    <select id="query" resultMap="BaseResultMap">
+        SELECT c.*,
+        o.code,
+        o.buy_price * o.buy_number AS total_price,
+        p.name AS product_name,
+        p.old_level,
+        p.cover_list,
+        p.price,
+        u1.user_name AS seller_name,
+        u2.user_name AS customer_name,
+        cat.name AS category_name
+        FROM complain c
+        LEFT JOIN orders o ON o.id = c.order_id
+        LEFT JOIN product p ON p.id = o.product_id
+        LEFT JOIN user u1 ON u1.id = p.user_id
+        LEFT JOIN user u2 ON u2.id = o.user_id
+        LEFT JOIN category cat ON cat.id = p.category_id
+        <where>
+            <if test="id != null">
+                AND c.id = #{id}
+            </if>
+            <if test="orderId != null">
+                AND c.order_id = #{orderId}
+            </if>
+            <if test="orderCode != null and orderCode != ''">
+                AND o.code LIKE concat('%', #{orderCode}, '%')
+            </if>
+            <if test="customerComplainStatus != null">
+                AND c.customer_complain_status = #{customerComplainStatus}
+            </if>
+            <if test="adminComplainStatus != null">
+                AND c.admin_complain_status = #{adminComplainStatus}
+            </if>
+            <if test="userId != null">
+                AND o.user_id = #{userId}
+            </if>
+        </where>
+        ORDER BY c.create_time DESC
+        <if test="current != null and size != null">
+            LIMIT #{current}, #{size}
+        </if>
+    </select>
+
+    <!-- 满足分页条件的申诉总项 -->
+    <select id="queryCount" resultType="integer">
+        SELECT COUNT(*)
+        FROM complain c
+        LEFT JOIN orders o ON o.id = c.order_id
+        <where>
+            <if test="id != null">
+                AND c.id = #{id}
+            </if>
+            <if test="orderId != null">
+                AND c.order_id = #{orderId}
+            </if>
+            <if test="orderCode != null and orderCode != ''">
+                AND o.code LIKE concat('%', #{orderCode}, '%')
+            </if>
+            <if test="customerComplainStatus != null">
+                AND c.customer_complain_status = #{customerComplainStatus}
+            </if>
+            <if test="adminComplainStatus != null">
+                AND c.admin_complain_status = #{adminComplainStatus}
+            </if>
+            <if test="userId != null">
+                AND o.user_id = #{userId}
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据订单id列表查询申诉信息（修复字段不全） -->
+    <select id="queryByOrderIds" resultMap="BaseResultMap">
+        SELECT c.*,
+        o.code,
+        o.buy_price * o.buy_number AS total_price,
+        p.name AS product_name,
+        p.old_level,
+        p.cover_list,
+        p.price,
+        u1.user_name AS seller_name,
+        u2.user_name AS customer_name,
+        cat.name AS category_name
+        FROM complain c
+        LEFT JOIN orders o ON o.id = c.order_id
+        LEFT JOIN product p ON p.id = o.product_id
+        LEFT JOIN user u1 ON u1.id = p.user_id
+        LEFT JOIN user u2 ON u2.id = o.user_id
+        LEFT JOIN category cat ON cat.id = p.category_id
+        WHERE c.order_id IN
+        <foreach collection="orderIds" item="orderId" open="(" separator="," close=")">
+            #{orderId}
+        </foreach>
+        <if test="customerComplainStatus != null">
+            AND c.customer_complain_status = #{customerComplainStatus}
+        </if>
+        <if test="orderCode != null and orderCode != ''">
+            AND o.code LIKE concat('%', #{orderCode}, '%')
+        </if>
+    </select>
+
+    <!-- 根据id查询申诉信息 -->
+    <select id="queryById" resultMap="BaseResultMap">
+        SELECT c.*,
+               o.code,
+               o.buy_price * o.buy_number AS total_price,
+               p.name AS product_name,
+               p.old_level,
+               p.cover_list,
+               p.price,
+               u1.user_name AS seller_name,
+               u2.user_name AS customer_name,
+               cat.name AS category_name
+        FROM complain c
+                 LEFT JOIN orders o ON o.id = c.order_id
+                 LEFT JOIN product p ON p.id = o.product_id
+                 LEFT JOIN user u1 ON u1.id = p.user_id
+                 LEFT JOIN user u2 ON u2.id = o.user_id
+                 LEFT JOIN category cat ON cat.id = p.category_id
+        WHERE c.id = #{id}
+    </select>
+
+    <!-- 根据订单id查询申诉信息 -->
+    <select id="queryByOrderId" resultMap="BaseResultMap">
+        SELECT c.*,
+               o.code,
+               o.buy_price * o.buy_number AS total_price,
+               p.name AS product_name,
+               p.old_level,
+               p.cover_list,
+               p.price,
+               u1.user_name AS seller_name,
+               u2.user_name AS customer_name,
+               cat.name AS category_name
+        FROM complain c
+                 LEFT JOIN orders o ON o.id = c.order_id
+                 LEFT JOIN product p ON p.id = o.product_id
+                 LEFT JOIN user u1 ON u1.id = p.user_id
+                 LEFT JOIN user u2 ON u2.id = o.user_id
+                 LEFT JOIN category cat ON cat.id = p.category_id
+        WHERE c.order_id = #{orderId}
+    </select>
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="cn.kmbeast.pojo.vo.ComplainVO">
+        <id column="id" property="id"/>
+        <result column="order_id" property="orderId"/>
+        <result column="picture_list" property="pictureList"/>
+        <result column="detail" property="detail"/>
+        <result column="admin_comment" property="adminComment"/>
+        <result column="customer_complain_status" property="customerComplainStatus"/>
+        <result column="admin_complain_status" property="adminComplainStatus"/>
+        <result column="create_time" property="createTime"/>
+        <result column="process_time" property="processTime"/>
+        <result column="code" property="code"/>
+        <result column="total_price" property="totalPrice"/>
+        <result column="product_name" property="productName"/>
+        <result column="old_level" property="oldLevel"/>
+        <result column="cover_list" property="coverList"/>
+        <result column="price" property="price"/>
+        <result column="seller_name" property="sellerName"/>
+        <result column="customer_name" property="customerName"/>
+        <result column="category_name" property="categoryName"/>
+    </resultMap>
+
+</mapper>

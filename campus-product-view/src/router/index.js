@@ -22,6 +22,7 @@ const routes = [
       { path: "/productManage", name: '商品管理', icon: 'el-icon-shopping-bag-1', component: () => import(`@/views/admin/Product.vue`), meta: { requireAuth: true } },
       {path: "/categoryManage", name: '商品类别管理', icon: 'el-icon-document-checked', component: () => import(`@/views/admin/Category.vue`), meta: { requireAuth: true } },
       { path: "/evaluations", name: '评论管理', icon: 'el-icon-chat-dot-round', component: () => import(`@/views/admin/Evaluations.vue`), meta: { requireAuth: true } },
+      {path: "/ComplainManage",name: '申诉管理',icon: 'el-icon-warning-outline',component: () => import(`@/views/admin/ComplainManage.vue`),meta: { requireAuth: true }},
     ]
   },
   {

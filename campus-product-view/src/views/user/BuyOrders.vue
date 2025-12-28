@@ -114,10 +114,63 @@
                 >删除</span
               >
             </span>
+
+            <!-- 申诉按钮和状态显示 -->
+            <div style="margin-top: 10px;">
+              <template v-if="getComplainStatusText(orderInfo)">
+                <el-tag type="info" size="small">
+                  {{ getComplainStatusText(orderInfo) }}
+                </el-tag>
+              </template>
+              <template v-else>
+                <el-button
+                  type="danger"
+                  size="small"
+                  v-if="orderInfo.tradeStatus && !orderInfo.refundStatus"
+                  @click="openComplainDialog(orderInfo)"
+                >
+                  发起申诉
+                </el-button>
+              </template>
+            </div>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- 申诉对话框 -->
+    <el-dialog title="发起申诉" :visible.sync="complainDialogVisible" width="500px">
+      <el-form :model="complainForm" :rules="complainRules" ref="complainForm" label-width="80px">
+        <el-form-item label="申诉理由" prop="detail">
+          <el-input
+            type="textarea"
+            :rows="5"
+            placeholder="请详细描述问题（如质量问题、物流问题等）"
+            v-model="complainForm.detail"
+          ></el-input>
+        </el-form-item>
+
+        <el-form-item label="上传图片">
+          <el-upload
+            action="http://localhost:21090/api/campus-product-sys/v1.0/file/upload"
+            list-type="picture-card"
+            :on-success="handleUploadSuccess"
+            :on-remove="handleUploadRemove"
+            :file-list="complainForm.pictureList"
+            :limit="6"
+            multiple
+          >
+            <i class="el-icon-plus"></i>
+          </el-upload>
+          <div class="el-upload__tip">最多上传6张图片，支持jpg/png</div>
+        </el-form-item>
+      </el-form>
+
+      <span slot="footer">
+        <el-button @click="complainDialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="submitComplain">提交申诉</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -134,6 +187,20 @@ export default {
         { tradeStatus: true, name: "已支付" },
         { tradeStatus: false, name: "未支付" },
       ],
+
+      // 申诉相关
+      complainDialogVisible: false,
+      currentOrder: null,
+      complainForm: {
+        detail: '',
+        pictureList: []
+      },
+      complainRules: {
+        detail: [
+          { required: true, message: '请填写申诉理由', trigger: 'blur' },
+          { min: 10, message: '理由至少10个字', trigger: 'blur' }
+        ]
+      }
     };
   },
   created() {
@@ -176,55 +243,41 @@ export default {
         }
       }
     },
-    /**
-     * 计算总金额
-     */
     totalPrice(orderInfo) {
       const totalPrice = orderInfo.buyNumber * orderInfo.buyPrice;
-      // 保留两位小数点
       return parseFloat(totalPrice).toFixed(2);
     },
     refund(orders) {
-    
-         
-     this.$confirm('确定要申请退款吗？', '提示', {
+      this.$confirm('确定要申请退款吗？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-    }).then(() => {
-        // 只发送一个请求
+      }).then(() => {
         this.$axios.post(`/product/refund/${orders.id}`)
-            .then((res) => {
-                const { data } = res;
-                if (data.code === 200) {
-                    // 更新前端状态
-                    orders.customerRefundStatus = true;
-                    orders.refundStatus = true;
-                    orders.isRefundConfirm = false;
-                    
-                    this.$notify.success({
-                        title: '成功',
-                        message: '退款申请已提交',
-                        duration: 1500
-                    });
-                    
-                    // 刷新数据
-                    this.fetchOrders();
-                }
-            }).catch(error => {
-                console.log("退款异常：", error);
-                this.$notify.error('网络错误，请重试');
-            });
-    }).catch(() => {
-        // 用户取消
-    });
-      
+          .then((res) => {
+            const { data } = res;
+            if (data.code === 200) {
+              orders.customerRefundStatus = true;
+              orders.refundStatus = true;
+              orders.isRefundConfirm = false;
+              this.$notify.success({
+                title: '成功',
+                message: '退款申请已提交',
+                duration: 1500
+              });
+              this.fetchOrders();
+            }
+          }).catch(error => {
+            console.log("退款异常：", error);
+            this.$notify.error('网络错误，请重试');
+          });
+      }).catch(() => {});
     },
     placeAnOrder(orders) {
       this.$axios
         .post(`/product/placeAnOrder/${orders.id}`)
         .then((res) => {
-          const { data } = res; // 解构
+          const { data } = res;
           if (data.code === 200) {
             this.$notify({
               duration: 1000,
@@ -241,18 +294,15 @@ export default {
     },
     coverParse(coverList) {
       if (coverList.productCover === null) {
-        return;
+        return '';
       }
       return coverList.productCover.split(",")[0];
     },
-    /**
-     * 购物订单
-     */
     fetchOrders() {
       this.$axios
         .post("/orders/queryUser", this.ordersQueryDto)
         .then((res) => {
-          const { data } = res; // 解构
+          const { data } = res;
           if (data.code === 200) {
             this.ordersList = data.data.map((order) => {
               return {
@@ -268,10 +318,9 @@ export default {
                 refundTime: order.refundTime,
                 isRefundConfirm: order.isRefundConfirm,
                 createTime: order.createTime,
-                tradeTime: order.tradeTime,
-                refundTime: order.refundTime,
                 cover: this.coverParse(order),
-                customerRefundStatus:order.customerRefundStatus
+                customerRefundStatus: order.customerRefundStatus,
+                adminComment: order.adminComment || null // 关键：映射 adminComment
               };
             });
           }
@@ -280,6 +329,72 @@ export default {
           console.log("订单数据查询异常：", error);
         });
     },
+
+    // 关键：申诉状态判断
+    getComplainStatusText(orderInfo) {
+      if (orderInfo.adminComment) {
+        if (orderInfo.adminComment.startsWith('同意：')) {
+          return '申诉已通过';
+        }
+        if (orderInfo.adminComment.startsWith('拒绝：')) {
+          return '申诉被拒绝';
+        }
+        if (orderInfo.adminComment.trim() !== '') {
+          return '申诉处理中';
+        }
+      }
+      return null; // 未申诉
+    },
+
+    // 申诉相关方法
+    openComplainDialog(orderInfo) {
+      this.currentOrder = orderInfo;
+      this.complainForm = {
+        detail: '',
+        pictureList: []
+      };
+      this.complainDialogVisible = true;
+    },
+
+    handleUploadSuccess(response) {
+      if (response.code === 200) {
+        this.complainForm.pictureList.push(response.data);
+        this.$message.success('图片上传成功');
+      } else {
+        this.$message.error('上传失败');
+      }
+    },
+
+    handleUploadRemove(file) {
+      this.complainForm.pictureList = this.complainForm.pictureList.filter(url => url !== file.url);
+    },
+
+    submitComplain() {
+      this.$refs.complainForm.validate(valid => {
+        if (!valid) return;
+
+        const complainData = {
+          orderId: this.currentOrder.id,
+          detail: this.complainForm.detail,
+          pictureList: this.complainForm.pictureList.join(',') || null
+        };
+
+        this.$axios.post('/api/campus-product-sys/v1.0/complain/save', complainData)
+          .then(res => {
+            if (res.data.code === 200) {
+              this.$message.success('申诉提交成功，等待管理员处理');
+              this.complainDialogVisible = false;
+              this.fetchOrders();
+            } else {
+              this.$message.error(res.data.msg || '提交失败');
+            }
+          })
+          .catch(err => {
+            this.$message.error('申诉提交失败');
+            console.error(err);
+          });
+      });
+    }
   },
 };
 </script>
