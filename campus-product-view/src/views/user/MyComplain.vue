@@ -51,6 +51,7 @@
 
 <script>
 export default {
+  name: 'complain',
   data() {
     return {
       list: []
@@ -62,7 +63,7 @@ export default {
   methods: {
     loadMyComplains() {
       this.$axios.post('/api/campus-product-sys/v1.0/complain/queryUser', {
-        current: 1,
+        current: 0,
         size: 100  // 取足够多，简单实现
       }).then(res => {
         if (res.data.code === 200) {

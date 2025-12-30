@@ -20,6 +20,9 @@
             <span v-if="loginStatus" @click="handleRouteSelect('/feedback')"
               >问题反馈</span
             >
+            <span v-if="loginStatus" @click="handleRouteSelect('/complain')">
+              申诉
+            </span>
           </div>
         </div>
 

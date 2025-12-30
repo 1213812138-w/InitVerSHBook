@@ -21,6 +21,7 @@ import org.springframework.util.StringUtils;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 商品类别业务逻辑接口实现类
@@ -69,6 +70,9 @@ public class ProductServiceImpl implements ProductService {
         if (productVO.getInventory() <= 0
                 || (productVO.getInventory() - ordersDTO.getBuyNumber()) < 0) {
             return ApiResult.error("商品库存不足");
+        }
+        if (Objects.equals(productVO.getUserId(),LocalThreadHolder.getUserId())){
+            return ApiResult.error("不要购买自己的商品!");
         }
         createOrders(ordersDTO, productVO);
         ordersMapper.save(ordersDTO);

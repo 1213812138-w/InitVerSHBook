@@ -3,11 +3,11 @@
         <div>
             <el-tabs v-model="activeName" @tab-click="handleClick">
                 <el-tab-pane label="购物的订单" name="first">
-                    <BuyOrders />
+                    <BuyOrders ref="BuyOrdersRef" />
                 </el-tab-pane>
 
                 <el-tab-pane label="收到的订单" name="second">
-                    <MyOrders />
+                    <MyOrders ref="MyOrdersRef" />
                 </el-tab-pane>
 
             </el-tabs>
@@ -33,9 +33,14 @@ export default {
 
     },
     methods: {
-        handleClick(index,tab){
-            
-        },
+        handleClick(tab){
+            if(tab.name === "first"&& this.$refs.BuyOrdersRef){
+                this.$refs.BuyOrdersRef.fetchOrders();
+            }
+            if(tab.name === "second"&& this.$refs.MyOrdersRef){
+                this.$refs.MyOrdersRef.fetchOrders();
+            }
+        }
     }
 };
 </script>
