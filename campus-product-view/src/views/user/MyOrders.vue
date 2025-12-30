@@ -58,11 +58,7 @@
                     </div>
 
                     <div class="orders-base-info">创建时间：{{ orderInfo.createTime }}</div>
-<div style="color: red;">
-    调试信息：<br>
-    isRefundConfirm: {{ orderInfo.isRefundConfirm }}<br>
-    customerRefundStatus: {{ orderInfo.customerRefundStatus }}
-</div>
+
                     <div style="margin-block: 10px;">
                         <span v-if="orderInfo.isRefundConfirm" style="color: rgb(0, 121, 186);">
                             钱款已经原路返回

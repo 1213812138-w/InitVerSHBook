@@ -95,7 +95,7 @@
                 <el-table-column label="操作" width="160">
                     <template slot-scope="scope">
                         <span class="text-button" @click="handleEdit(scope.row)">商品详情</span>
-
+                      <span class="text-button" @click="handleDelete(scope.row)">删除</span>
                         
 
                     </template>
