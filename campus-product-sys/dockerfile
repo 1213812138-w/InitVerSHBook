@@ -1,0 +1,3 @@
+FROM swr.cn-north-4.myhuaweicloud.com/library/java:openjdk-8-jdk-alpine 
+ADD campus-product-sys/target/campus-product-api-1.0-SNAPSHOT.jar /
+ENTRYPOINT ["java","-jar","/campus-product-api-1.0-SNAPSHOT.jar"] 
