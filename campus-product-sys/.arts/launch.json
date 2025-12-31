@@ -1,0 +1,88 @@
+{
+    "configurations": [
+        {
+            "type": "javadbg",
+            "name": "EvoSuite: generate",
+            "request": "launch",
+            "maven": {
+                "goals": [
+                    "evosuite:generate"
+                ]
+            },
+            "vmOptions": ""
+        },
+        {
+            "type": "javadbg",
+            "name": "EvoSuite: clean",
+            "request": "launch",
+            "maven": {
+                "goals": [
+                    "evosuite:clean"
+                ]
+            }
+        },
+        {
+            "type": "javadbg",
+            "name": "EvoSuite: coverage",
+            "request": "launch",
+            "maven": {
+                "goals": [
+                    "evosuite:coverage"
+                ]
+            }
+        },
+        {
+            "type": "javadbg",
+            "name": "EvoSuite: export",
+            "request": "launch",
+            "maven": {
+                "goals": [
+                    "evosuite:export"
+                ]
+            }
+        },
+        {
+            "type": "javadbg",
+            "name": "EvoSuite: help",
+            "request": "launch",
+            "maven": {
+                "goals": [
+                    "evosuite:help"
+                ]
+            }
+        },
+        {
+            "type": "javadbg",
+            "name": "EvoSuite: info",
+            "request": "launch",
+            "maven": {
+                "goals": [
+                    "evosuite:info"
+                ]
+            }
+        },
+        {
+            "type": "javadbg",
+            "name": "EvoSuite: prepare",
+            "request": "launch",
+            "maven": {
+                "goals": [
+                    "evosuite:prepare"
+                ]
+            }
+        },
+        {
+            "request": "launch",
+            "type": "javadbg",
+            "name": "CampusProductApplication",
+            "__internal_id": "e1828b9e-51ca-4424-8f0c-42c1482fe0bd",
+            "temporary": false,
+            "withCoverage": false,
+            "mainClass": {
+                "name": "cn.kmbeast.CampusProductApplication",
+                "sourcePath": "${workspaceFolder}/src/main/java/cn/kmbeast/CampusProductApplication.java",
+                "shell": "internal-console"
+            }
+        }
+    ]
+}
