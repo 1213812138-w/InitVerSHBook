@@ -96,7 +96,7 @@ public class FileController {
     }
 
     public static boolean fileName(MultipartFile multipartFile, String fileName) throws IOException {
-        File fileDir = new File(PathUtils.getClassLoadRootPath() + "/pic");
+        File fileDir = new File( "/pic");
         if (!fileDir.exists()) {
             if (!fileDir.mkdirs()) {
                 return false;
@@ -125,7 +125,7 @@ public class FileController {
     @GetMapping("/getFile")
     public void getImage(@RequestParam("fileName") String imageName,
                          HttpServletResponse response) throws IOException {
-        File fileDir = new File(PathUtils.getClassLoadRootPath() + "/pic");
+        File fileDir = new File( "/pic");
         File image = new File(fileDir.getAbsolutePath() + "/" + imageName);
         if (image.exists()) {
             FileInputStream fileInputStream = new FileInputStream(image);
